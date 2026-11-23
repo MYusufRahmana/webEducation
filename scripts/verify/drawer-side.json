@@ -1,0 +1,1 @@
+[["wait",2500],["eval","document.querySelector('.menu-button').click(); 'open'"],["wait",400],["shot","shots/side-drawer.png",".drawer",1.6],["eval","JSON.stringify({sw: document.documentElement.scrollWidth, overflow: [...document.querySelectorAll('.drawer .nav-group, .drawer .nav-lessons a')].filter(e => e.scrollWidth > e.clientWidth + 1).length})"]]

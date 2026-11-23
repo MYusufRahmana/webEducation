@@ -1,0 +1,2 @@
+[["wait",3000],["eval","(() => { const b = document.querySelector('.step-nav .button.primary'); const r = b.getBoundingClientRect(); const top = document.elementFromPoint(r.x + r.width/2, r.y + r.height/2); return 'btn ' + Math.round(r.x)+','+Math.round(r.y) + ' top=' + (top && (top.className || top.tagName)); })()"],
+ ["eval","document.querySelector('.step-nav .button.primary').click(); 'clicked'"],["wait",1500],["eval","'JSCLICK ' + S()"]]

@@ -1,0 +1,13 @@
+[["wait",2500],["eval","window.t0 = parseFloat(document.querySelector('.state-readout').textContent.replace('t = ','').replace(',','.')); 'HERO p=' + getComputedStyle(document.querySelector('.story')).getPropertyValue('--p') + ' phase=' + document.querySelector('.story').dataset.phase"],
+ ["eval","window.scrollTo(0,420)"],["wait",600],["eval","'LEARN phase=' + document.querySelector('.story').dataset.phase + ' || ' + R().slice(0,120)"],
+ ["click",".mode .segmented button:nth-child(2)"],["wait",300],
+ ["eval","[...document.querySelectorAll('.explore button')].map(b=>b.textContent).join(' / ')"],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>b.textContent.includes('Matikan C1')).click(); 'stop C1'"],["wait",200],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>b.textContent.includes('5 pesan')).click(); 'burst'"],["wait",3500],["eval","'C1 OFF + BURST ' + R()"],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>b.textContent.includes('Hubungkan C2')).click(); 'attach C2'"],["wait",4000],["eval","'C2 ON ' + R()"],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>b.textContent.includes('Cepat')).click(); 'fast'"],["wait",300],["eval","'RATE ' + [...document.querySelectorAll('.explore .segmented [aria-pressed=true]')].map(b=>b.textContent).join()"],
+ ["eval","window.scrollTo(0, 2400)"],["wait",800],["eval","'SCROLL KEEP mode=' + document.querySelector('.mode .segmented [aria-pressed=true]').textContent + ' step=' + document.querySelector('.step-nav [aria-current]').textContent"],
+ ["click",".header-tools .segmented button:nth-child(2)"],["wait",600],["eval","'EN ' + document.title + ' || ' + R().slice(0,140)"],
+ ["eval","JSON.stringify([...document.querySelectorAll('.related a')].map(a=>a.getAttribute('href').replace(location.origin,'')))"],
+ ["eval","JSON.stringify([...document.querySelectorAll('.topic-select option')].map(o=>o.value+':'+o.textContent))"]
+]

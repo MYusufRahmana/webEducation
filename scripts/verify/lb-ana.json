@@ -1,0 +1,1 @@
+[["wait",3000],["eval","document.querySelector('.view-toggle button').click(); document.querySelector('[aria-controls=hubungan-analogi]').click(); 'x'"],["wait",9000],["shot","shots/lb-ana.png","html",0.65,[0,0,1440,900]]]

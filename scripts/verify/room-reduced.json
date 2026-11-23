@@ -1,0 +1,1 @@
+[["wait",4000],["eval","'REDUCED ' + document.querySelector('.figure-note').textContent + ' | ' + document.querySelector('.state-readout').textContent + ' | sw=' + document.documentElement.scrollWidth + ' navBottom=' + Math.round(document.querySelector('.step-nav').getBoundingClientRect().bottom + scrollY) + ' docH=' + document.documentElement.scrollHeight"]]

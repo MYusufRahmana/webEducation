@@ -1,0 +1,1 @@
+[["wait",3000],["eval","(() => { const f = document.querySelector('.figure-fallback'); const img = f && f.querySelector('img'); return 'FALLBACK ' + !!f + ' imgOk=' + (img && img.complete && img.naturalWidth > 0) + ' | ' + (f ? f.textContent : '') + ' | panel=' + document.querySelector('#step-title').textContent; })()"]]

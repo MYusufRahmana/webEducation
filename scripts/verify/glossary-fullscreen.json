@@ -1,0 +1,7 @@
+[["wait",1200],["eval","window.scrollTo(0, document.querySelector('#langkah-health-check').getBoundingClientRect().top + scrollY - 110)"],["wait",4500],["shot","shots/dark-desk.png","html",1,[0,0,1440,900]],
+ ["eval","document.querySelector('#langkah-health-check .term').focus(); 'f'"],["key","Enter","#langkah-health-check .term"],["wait",300],["eval","'POPOVER open=' + !!document.querySelector('.popover') + ' text=' + (document.querySelector('.popover p')||{}).textContent"],
+ ["key","Escape","#langkah-health-check .term"],["wait",200],["eval","'POPOVER after Esc=' + !!document.querySelector('.popover') + ' focus=' + document.activeElement.className"],
+ ["click","[aria-label='Layar penuh']"],["wait",700],["eval","'FULL ' + (document.fullscreenElement ? 'native' : 'none') + ' data-full=' + document.querySelector('.figure-panel').dataset.full + ' focus=' + document.activeElement.getAttribute('aria-label')"],["shot","shots/full.png","html",0.6,[0,0,1440,900]],
+ ["key","Escape","[aria-label='Keluar layar penuh']"],["wait",700],["eval","'EXIT data-full=' + document.querySelector('.figure-panel').dataset.full + ' focus=' + document.activeElement.getAttribute('aria-label')"],
+ ["click",".chip:nth-child(1)"],["click",".parts-list li:nth-child(5) .chip"],["wait",200],["eval","'PART ' + document.querySelector('.part-info').textContent.slice(0,90) + ' mode=' + document.querySelector('.mode .segmented [aria-pressed=true]').textContent"]
+]

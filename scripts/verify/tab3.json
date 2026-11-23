@@ -1,0 +1,1 @@
+[["wait",3500],["shot","shots/t3.png","html",0.8,[0,0,1024,768]],["eval","JSON.stringify({sw: document.documentElement.scrollWidth, sh: document.documentElement.scrollHeight, bodyClass: document.body.className})"]]

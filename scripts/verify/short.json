@@ -1,0 +1,1 @@
+[["wait",2500],["eval","JSON.stringify({stage: document.querySelector('.story').dataset.stage, panelPos: getComputedStyle(document.querySelector('.figure-panel')).position, inert: document.querySelector('.figure-bar').hasAttribute('inert'), sw: document.documentElement.scrollWidth})"]]

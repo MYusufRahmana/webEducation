@@ -1,0 +1,28 @@
+{
+  "name": "alur",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "figure": "node scripts/build-figure.mjs && node scripts/build-figure-mq.mjs && node scripts/build-figure-dns.mjs",
+    "figure:audit": "node scripts/build-figure.mjs --audit && node scripts/build-figure-mq.mjs --audit && node scripts/build-figure-dns.mjs --audit",
+    "dev": "vite",
+    "build": "npm run figure && tsc --noEmit -p . && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "print": "node scripts/print-topics.mjs"
+  },
+  "dependencies": {
+    "@fontsource/source-sans-3": "^5.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8"
+  }
+}

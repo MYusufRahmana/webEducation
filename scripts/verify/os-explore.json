@@ -1,0 +1,5 @@
+[["wait",3000],["eval","document.querySelector('[aria-controls=rincian-figur]').click(); 'open'"],["wait",200],["eval","[...document.querySelectorAll('#rincian-figur .mode button')].find(b=>/Eksplorasi/.test(b.textContent)).click(); 'explore'"],["wait",300],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>/Buat link/.test(b.textContent)).click(); 'presign'"],["wait",2600],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>/Unduh lewat link/.test(b.textContent)).click(); 'dl'"],["wait",3200],["eval","'DL ' + document.querySelector('.metrics').textContent"],
+ ["eval","['Matikan 1','Matikan 2','Matikan 3'].forEach(t => [...document.querySelectorAll('.explore button')].find(b=>b.textContent.includes(t)).click()); [...document.querySelectorAll('.explore button')].find(b=>/^Ambil/.test(b.textContent)).click(); 'down3+get'"],["wait",2600],["eval","'DOWN3 ' + document.querySelector('.metrics').textContent"],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>/Unggah foto baru/.test(b.textContent)).click(); 'up'"],["wait",2600],["eval","'PUT-503 ' + document.querySelector('.metrics').textContent"]]

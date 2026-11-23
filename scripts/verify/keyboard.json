@@ -1,0 +1,8 @@
+[["wait",2500],
+ ["eval","window.scrollTo(0,120)"],["wait",300],["eval","'RM at 120: ' + P()"],["eval","window.scrollTo(0,200)"],["wait",300],["eval","'RM at 200: ' + P()"],["eval","window.scrollTo(0,0)"],["wait",400],
+ ["eval","document.querySelector('.hero .button').focus(); document.activeElement.textContent"],
+ ["key","Tab","*"],["wait",400],["eval","'TAB1 ' + document.activeElement.tagName + ':' + document.activeElement.textContent.slice(0,30) + ' y=' + scrollY + ' ' + P()"],
+ ["key","Tab","*"],["wait",300],["eval","(() => { const r = document.activeElement.getBoundingClientRect(); return 'TAB2 ' + document.activeElement.textContent.slice(0,30) + ' top=' + Math.round(r.top) + ' coveredByHeader=' + (r.top < 64); })()"],
+ ["eval","window.scrollTo(0,500)"],["wait",500],["click","[aria-label='Layar penuh']"],["wait",700],["eval","(() => { const r = document.querySelector('.stage-art').getBoundingClientRect(); return 'FULL ' + document.querySelector('.figure-panel').dataset.full + ' art=' + Math.round(r.width) + 'x' + Math.round(r.height) + ' focus=' + document.activeElement.getAttribute('aria-label'); })()"],["shot","shots/k-full.png","html",0.6,[0,0,1440,900]],
+ ["key","Escape","[aria-label='Keluar layar penuh']"],["wait",800],["eval","(() => { const r = document.querySelector('.stage-art').getBoundingClientRect(); return 'EXIT focus=' + document.activeElement.getAttribute('aria-label') + ' art=' + Math.round(r.left) + ',' + Math.round(r.top) + ' ' + Math.round(r.width) + 'x' + Math.round(r.height); })()"]
+]

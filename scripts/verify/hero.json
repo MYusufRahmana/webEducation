@@ -1,0 +1,4 @@
+[["wait",2500],["eval","document.querySelector('.story').dataset.stage + ' ' + getComputedStyle(document.querySelector('.story')).getPropertyValue('--reveal')"],["shot","shots/h-hero.png","html",0.75,[0,0,1440,900]],
+ ["eval","window.scrollTo(0,160)"],["wait",500],["shot","shots/h-mid.png","html",0.75,[0,160,1440,900]],
+ ["eval","window.scrollTo(0,330)"],["wait",900],["shot","shots/h-learn.png","html",0.75,[0,330,1440,900]],
+ ["eval","window.scrollTo(0,1400)"],["wait",900],["shot","shots/h-step.png","html",0.75,[0,1400,1440,900]]]

@@ -1,0 +1,1 @@
+[["wait",3500],["eval","(async () => { const out = []; for (const b of document.querySelectorAll('.step-map li button')) { b.click(); await new Promise(r => setTimeout(r, 300)); for (const dd of document.querySelectorAll('.metrics dd')) if (dd.scrollWidth > dd.clientWidth + 1) out.push(dd.textContent); } return 'CUT=' + JSON.stringify([...new Set(out)]); })()"]]

@@ -1,0 +1,1 @@
+[["wait",1500],["eval","location.hash='#langkah-tiers'; location.reload(); 'go'"],["wait",1700],["sheet","shots/dns-sheet.png",420,12,".stage-art",0.8,null,4]]

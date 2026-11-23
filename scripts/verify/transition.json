@@ -1,0 +1,8 @@
+[["wait",2500],["eval","window.t0 = T(); 'HERO ' + P() + ' t=' + t0"],
+ ["eval","window.scrollTo(0,160)"],["wait",400],["eval","'MID ' + P() + ' t=' + T()"],
+ ["eval","window.scrollTo(0,420)"],["wait",400],["eval","'LEARN ' + P() + ' t=' + T()"],
+ ["eval","window.scrollTo(0,0)"],["wait",400],["eval","'BACK ' + P() + ' t=' + T() + ' monotonic=' + (T() > t0)"],
+ ["click",".hero .button"],["wait",1500],["eval","'CTA y=' + scrollY + ' readingStartTop=' + Math.round(document.querySelector('.reading-start').getBoundingClientRect().top) + ' ' + P() + ' focus=' + document.activeElement.tagName + ' t=' + T()"],
+ ["eval","window.scrollTo(0, document.querySelector('#ringkasan').offsetTop - 300)"],["wait",600],["eval","'STICKY END panelBottom=' + Math.round(document.querySelector('.figure-panel').getBoundingClientRect().bottom) + ' closingTop=' + Math.round(document.querySelector('#ringkasan').getBoundingClientRect().top)"],
+ ["eval","window.scrollTo(0,600)"],["wait",600],["click",".mode .segmented button:nth-child(2)"],["wait",200],["click",".explore .control:first-child .button"],["wait",300],["eval","window.scrollTo(0,0)"],["wait",800],["eval","window.scrollTo(0,2600)"],["wait",900],["eval","'EXPLORE kept: ' + document.querySelector('.mode .segmented [aria-pressed=true]').textContent + ' || ' + R()"]
+]

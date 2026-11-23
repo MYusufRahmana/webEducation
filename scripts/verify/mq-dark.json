@@ -1,0 +1,1 @@
+[["wait",2500],["shot","shots/mq-d-hero.png","html",0.6,[0,0,1440,900]],["eval","location.hash='#langkah-scale'; location.reload(); 'go'"],["wait",11000],["shot","shots/mq-d-panel.png",".figure-panel",1.2]]

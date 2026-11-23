@@ -1,0 +1,1 @@
+[["wait",2500],["eval","JSON.stringify([...document.querySelectorAll('.catalog-group h2')].map(h=>h.textContent.trim()).concat([...document.querySelectorAll('.lesson-card strong')].map(s=>s.textContent)).concat([...document.querySelectorAll('.lesson-card img')].map(i => i.naturalWidth > 0)))"]]

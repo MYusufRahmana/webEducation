@@ -1,0 +1,5 @@
+[["wait",1000],["eval","window.scrollTo(0, 320)"],["wait",800],
+ ["click",".bar-buttons button:nth-child(2)"],["wait",1300],["click",".bar-buttons button:nth-child(2)"],["wait",1300],["click",".bar-buttons button:nth-child(2)"],["wait",1500],["eval","'STEP4 start ' + R()"],["wait",8000],["eval","'STEP4 +8s ' + R()"],
+ ["click",".bar-buttons button:nth-child(2)"],["wait",2000],["eval","'STEP5 start ' + R()"],["wait",7000],["eval","'STEP5 +9s ' + R()"],
+ ["click",".bar-buttons button:nth-child(2)"],["wait",1500],["eval","'SUMMARY top=' + Math.round(document.querySelector('#ringkasan').getBoundingClientRect().top) + ' label=' + document.querySelector('.bar-buttons button:nth-child(2)').getAttribute('aria-label')"]
+]

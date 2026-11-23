@@ -1,0 +1,6 @@
+[["wait",3000],["eval","'ANCHOR y=' + scrollY + ' ' + P() + ' || ' + R()"],
+ ["eval","window.scrollBy(0, 1100)"],["wait",1200],["eval","window.before = R(); 'scrolled to ' + scrollY + ' ' + before.slice(0,60)"],
+ ["eval","location.reload(); 'reload'"],["wait",3500],["eval","'AFTER RELOAD y=' + scrollY + ' ' + P() + ' || ' + R().slice(0,90)"],
+ ["click",".header-tools .segmented button:nth-child(2)"],["wait",600],["eval","'LANG ' + document.documentElement.lang + ' ' + R().slice(0,110)"],
+ ["eval","window.t1 = T(); const s = document.querySelector('.theme-select select'); s.value = 'dark'; s.dispatchEvent(new Event('change', {bubbles: true})); 'theme'"],["wait",700],["eval","'THEME ' + document.documentElement.dataset.theme + ' t before ' + t1 + ' after ' + T()"]
+]

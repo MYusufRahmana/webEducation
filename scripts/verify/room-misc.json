@@ -1,0 +1,16 @@
+[["wait",3000],
+ ["eval","(() => { const i = document.querySelector('.search input'); i.focus(); const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; set.call(i,'ttl'); i.dispatchEvent(new Event('input',{bubbles:true})); return 'typed'; })()"],["wait",300],
+ ["eval","'SEARCH ' + [...document.querySelectorAll('.search-panel li')].map(l=>l.querySelector('.search-kind').textContent+':'+l.querySelector('strong').textContent).join(' ; ')"],
+ ["key","Enter","input[type=search]"],["wait",1500],["eval","'SEARCH-GO ' + S()"],
+ ["eval","(() => { const i = document.querySelector('.search input'); i.focus(); const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; set.call(i,'zzzqqq'); i.dispatchEvent(new Event('input',{bubbles:true})); return 'typed'; })()"],["wait",300],
+ ["eval","'EMPTY ' + document.querySelector('.search-empty').textContent"],
+ ["key","Escape","input[type=search]"],["wait",200],
+ ["eval","document.querySelector('#step-title').focus(); 'focus title'"],
+ ["key","ArrowRight","#step-title"],["wait",1200],["eval","'KEY-RIGHT ' + S()"],
+ ["key","ArrowLeft","#step-title"],["wait",1200],["eval","'KEY-LEFT ' + S()"],
+ ["key"," ","#step-title"],["wait",200],["eval","window.t1 = document.querySelector('.state-readout').textContent; 'paused? ' + document.querySelector('.stage-buttons [aria-pressed]').getAttribute('aria-pressed')"],["wait",1500],["eval","'PAUSE-FROZEN ' + (window.t1 === document.querySelector('.state-readout').textContent) + ' ' + document.querySelector('.figure-note').textContent"],
+ ["key"," ","#step-title"],["wait",200],
+ ["key","r","#step-title"],["wait",300],["eval","'REPLAY ' + document.querySelector('.state-readout').textContent"],
+ ["eval","document.querySelector('.stage .icon-button[aria-label=\"Layar penuh\"]').click(); 'full'"],["wait",600],["eval","'FULL ' + document.querySelector('.stage').dataset.full + ' focus=' + document.activeElement.getAttribute('aria-label')"],
+ ["key","Escape","body"],["wait",600],["eval","'EXIT ' + (document.querySelector('.stage').dataset.full || 'none') + ' focus=' + document.activeElement.getAttribute('aria-label')"]
+]

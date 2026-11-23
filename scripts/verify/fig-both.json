@@ -1,0 +1,1 @@
+[["wait",3500],["shot","shots/fig-sys.png",".stage",1],["eval","document.querySelector('.view-toggle button').click(); 'analogy'"],["wait",700],["shot","shots/fig-ana.png",".stage",1],["eval","document.querySelectorAll('.view-toggle button')[1].click(); 'back'"]]

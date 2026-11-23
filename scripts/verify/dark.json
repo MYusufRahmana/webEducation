@@ -1,0 +1,1 @@
+[["wait",2500],["shot","shots/d-hero.png","html",0.6,[0,0,1440,900]],["eval","window.scrollTo(0,170)"],["wait",500],["shot","shots/d-mid.png","html",0.6,[0,170,1440,900]],["eval","window.scrollTo(0, document.querySelector('#langkah-server-down').offsetTop + 300)"],["wait",8000],["eval","scrollY"]]

@@ -1,0 +1,1 @@
+[["wait",2500],["shot","shots/mq-m-hero.png","html",1,[0,0,390,844]],["eval","JSON.stringify({sw: document.documentElement.scrollWidth, stage: document.querySelector('.story').dataset.stage})"]]

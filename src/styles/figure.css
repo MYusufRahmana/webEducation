@@ -1,0 +1,152 @@
+/* Figure tokens and live parts (shared by the page and the printable sheets). */
+/* ------------------------------------------------------------------ figure tokens (kit theme tuned to the page) */
+.iso-art[data-theme="light"],
+.iso-art {
+  --anatomy-page: #fffcf6;
+  --anatomy-card: #fffcf6;
+  --anatomy-text: #62675c;
+  --anatomy-strong: #242820;
+  --anatomy-muted: #767b6f;
+  --anatomy-paper: #fffcf6;
+  --anatomy-face: #ffffff;
+  --anatomy-top: #ffffff;
+  --anatomy-shade-0: #dcd5c8;
+  --anatomy-shade-1: #e5dfd4;
+  --anatomy-shade-2: #ede8df;
+  --anatomy-shade-3: #f5f1ea;
+  --anatomy-lit-top: #f1f7e6;
+  --anatomy-lit-shade: #dfebcb;
+  --anatomy-hi: #2c3127;
+  --anatomy-mid: #888c7f;
+  --anatomy-lo: #b9b5a9;
+  --anatomy-faint: #ddd7cb;
+  --anatomy-lit: #4c7a24;
+  --anatomy-halo: #6e6a5e;
+  --anatomy-halo-opacity: 0.28;
+  --anatomy-dot: #2c3127;
+  --lb-void: #c9c0b1;
+  --lb-token-top: #e3efcf;
+  --lb-fail-top: #fbe1de;
+  --lb-fail: #b42318;
+  --lb-lamp: #4c7a24;
+}
+.iso-art[data-theme="dark"] {
+  --anatomy-page: #222724;
+  --anatomy-card: #222724;
+  --anatomy-text: #bdc5b7;
+  --anatomy-strong: #f2f3eb;
+  --anatomy-muted: #939b8d;
+  --anatomy-paper: #222724;
+  --anatomy-face: #2e3530;
+  --anatomy-top: #323a34;
+  --anatomy-shade-0: #1b1f1c;
+  --anatomy-shade-1: #202521;
+  --anatomy-shade-2: #252b27;
+  --anatomy-shade-3: #2a302b;
+  --anatomy-lit-top: #3a4a2c;
+  --anatomy-lit-shade: #314027;
+  --anatomy-hi: #e8ebe0;
+  --anatomy-mid: #8f9888;
+  --anatomy-lo: #57614f;
+  --anatomy-faint: #3a433b;
+  --anatomy-lit: #aecf85;
+  --anatomy-halo: #03070b;
+  --anatomy-halo-opacity: 0.85;
+  --anatomy-dot: #e8ebe0;
+  --lb-void: #141715;
+  --lb-token-top: #44583a;
+  --lb-fail-top: #5a2a27;
+  --lb-fail: #ff9b8f;
+  --lb-lamp: #aecf85;
+}
+.lb-void {
+  fill: var(--lb-void);
+}
+/* highlight: the explained parts take the lit accent, everything else steps down one tone */
+.lb-svg[data-focus] .it:not([data-hl]) .iso-line[data-tone="hi"] {
+  stroke: var(--anatomy-mid);
+}
+.lb-svg[data-focus] .it:not([data-hl]) .iso-line[data-tone="mid"] {
+  stroke: var(--anatomy-lo);
+}
+.lb-svg .it[data-hl] .iso-edge,
+.lb-svg .it[data-hl] .tb-edge {
+  stroke: var(--anatomy-lit);
+}
+.lb-svg .it[data-hl] .iso-top {
+  fill: var(--anatomy-lit-top);
+}
+.lb-svg .it[data-hl] .iso-shade {
+  fill: var(--anatomy-lit-shade);
+}
+.lb-svg .it[data-sel] .iso-edge,
+.lb-svg .it[data-sel] .tb-edge {
+  stroke-width: 1.4px;
+}
+/* live parts */
+.lb-svg [data-live="pin"][data-state="up"] [data-show="down"],
+.lb-svg [data-live="pin"][data-state="down"] [data-show="up"] {
+  display: none;
+}
+.lb-svg [data-live][data-on] .iso-fill,
+.lb-svg [data-live][data-on] .iso-shade,
+.lb-svg [data-live][data-on] .iso-top {
+  fill: var(--lb-lamp);
+}
+.lb-svg [data-live][data-on] .iso-edge {
+  stroke: var(--lb-lamp);
+}
+.lb-svg [data-live="send"][data-on] .iso-fill,
+.lb-svg [data-live="act"][data-on] .iso-fill {
+  fill: var(--lb-lamp);
+}
+.lb-token .iso-top {
+  fill: var(--lb-token-top);
+}
+.lb-token [data-v="fail"] .iso-top {
+  fill: var(--lb-fail-top);
+}
+.lb-token [data-v="fail"] .iso-line[data-tone="hi"],
+.lb-token [data-v="fail"] .iso-edge {
+  stroke: var(--lb-fail);
+}
+.lb-token .iso-edge {
+  stroke: var(--anatomy-hi);
+}
+.lb-pulse {
+  fill: var(--anatomy-lit);
+  stroke: var(--anatomy-paper);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+.lb-pulse[data-back] {
+  fill: var(--anatomy-paper);
+  stroke: var(--anatomy-lit);
+  stroke-width: 1.4;
+}
+
+/* message cards */
+.mq-card .mq-retry > .iso-top {
+  fill: var(--lb-retry-top);
+}
+.mq-card .mq-fail > .iso-top {
+  fill: var(--lb-fail-top);
+}
+.mq-card .mq-fail ~ .iso-line,
+.mq-card [data-v="fail"] .iso-line[data-tone="hi"],
+.mq-card [data-v="fail"] .iso-edge {
+  stroke: var(--lb-fail);
+}
+.mq-card [data-v="ghost"] {
+  opacity: 0.55;
+}
+.mq-card [data-v="ghost"] .iso-top {
+  fill: var(--anatomy-paper);
+}
+.iso-art {
+  --lb-retry-top: #fdf0c8;
+}
+.iso-art[data-theme="dark"] {
+  --lb-retry-top: #5a4a1e;
+}
+

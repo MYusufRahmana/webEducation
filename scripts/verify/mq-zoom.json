@@ -1,0 +1,3 @@
+[["wait",1500],["eval","location.hash='#langkah-buffer'; location.reload(); 'go'"],["wait",7000],["shot","shots/mqz-buffer.png",".stage-art",2],["eval","'B ' + R()"],
+ ["eval","location.hash='#langkah-ack'; location.reload(); 'go'"],["wait",5300],["shot","shots/mqz-ack1.png",".stage-art",2],["eval","'A1 ' + R()"],["wait",1700],["shot","shots/mqz-ack2.png",".stage-art",2],["eval","'A2 ' + R()"],
+ ["eval","location.hash='#langkah-scale'; location.reload(); 'go'"],["wait",11500],["shot","shots/mqz-scale.png",".stage-art",2],["eval","'S ' + R()"]]

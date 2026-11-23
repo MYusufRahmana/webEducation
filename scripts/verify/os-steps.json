@@ -1,0 +1,6 @@
+[["wait",3000],["eval","document.querySelector('.view-toggle button:last-child').click(); 'sys'"],
+ ["eval","location.search='?topik=object-storage&langkah=mengapa'; 'go'"],["wait",4200],["shot","shots/os1.png","html",0.65,[0,0,1440,900]],
+ ["eval","location.search='?topik=object-storage&langkah=bucket-key'; 'go'"],["wait",5600],["shot","shots/os2.png",".stage",1],
+ ["eval","location.search='?topik=object-storage&langkah=tersebar'; 'go'"],["wait",2200],["shot","shots/os3a.png",".stage",1],["wait",3400],["shot","shots/os3b.png",".stage",1],
+ ["eval","location.search='?topik=object-storage&langkah=link-sementara'; 'go'"],["wait",4200],["shot","shots/os4a.png",".stage",1],["wait",6500],["shot","shots/os4b.png",".stage",1],
+ ["eval","location.search='?topik=object-storage&langkah=versi'; 'go'"],["wait",4400],["shot","shots/os5.png",".stage",1],["eval","document.querySelector('.view-toggle button').click(); 'ana'"],["wait",500],["shot","shots/os5-ana.png",".stage",1]]

@@ -1,0 +1,1 @@
+[["wait",3000],["eval","document.querySelector('.view-toggle button:last-child').click(); location.search='?topik=object-storage&langkah=bucket-key'; 'go'"],["wait",8000],["eval","document.querySelector('[aria-label=Jeda], .stage-buttons button:nth-child(2)').click(); 'pause'"],["shot","public/object-storage-dark.png",".iso-art",1.5]]

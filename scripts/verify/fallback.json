@@ -1,0 +1,1 @@
+[["wait",1500],["eval","window.scrollTo(0, 320)"],["wait",1500],["shot","shots/fallback.png",".stage-art",1],["eval","'FALLBACK ' + document.querySelector('.figure-fallback p').textContent + ' | readout still live: ' + document.querySelector('.state-readout').textContent"]]

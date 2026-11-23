@@ -1,0 +1,4 @@
+[["wait",2500],["shot","shots/dns-hero.png","html",0.75,[0,0,1440,900]],
+ ["eval","location.hash='#langkah-tiers'; location.reload(); 'go'"],["wait",3300],["shot","shots/dnsz-referral.png",".stage-art",2],["eval","'T ' + R()"],
+ ["eval","location.hash='#langkah-cache'; location.reload(); 'go'"],["wait",2500],["shot","shots/dnsz-cache.png",".stage-art",2],["eval","'C ' + R()"],
+ ["eval","location.hash='#langkah-ttl'; location.reload(); 'go'"],["wait",2600],["shot","shots/dnsz-stale.png",".stage-art",2],["eval","'S ' + R()"],["wait",7500],["shot","shots/dnsz-new.png",".stage-art",2],["eval","'N ' + R()"]]

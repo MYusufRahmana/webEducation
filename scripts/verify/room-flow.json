@@ -1,0 +1,16 @@
+[["wait",3000],["eval","'START ' + S()"],
+ ["eval","document.querySelector('.step-nav .button.primary').click(); 'c'"],["wait",1500],["eval","'NEXT ' + S()"],
+ ["eval","document.querySelector('.step-map li:nth-child(5) button').click(); 'c'"],["wait",2500],["eval","'MAP5 ' + S()"],
+ ["eval","history.back(); 'back'"],["wait",1500],["eval","'BACK ' + S()"],
+ ["eval","history.forward(); 'fwd'"],["wait",1500],["eval","'FWD ' + S()"],
+ ["eval","window.scrollTo(0, 2000); 'scroll'"],["wait",800],["eval","'SCROLL ' + S()"],
+ ["eval","window.scrollTo(0, 0); document.querySelector('[aria-controls=rincian-figur]').click(); 'open'"],["wait",300],
+ 
+ ["eval","[...document.querySelectorAll('#rincian-figur .mode button')].find(b=>/Eksplorasi/.test(b.textContent)).click(); 'explore'"],["wait",300],
+ ["eval","[...document.querySelectorAll('.explore button')].find(b=>/Ubah alamat/.test(b.textContent)).click(); 'changed'"],["wait",300],["eval","'EXPLORE ' + S()"],
+ ["eval","document.querySelector('.step-map li:nth-child(6) button').click(); 'c'"],["wait",1500],["eval","'LEAVE-EXPLORE ' + S()"],
+ ["eval","document.querySelector('.step-map li:last-child button').click(); 'c'"],["wait",1500],["eval","'SUMMARY ' + S() + ' | related=' + document.querySelectorAll('.related a').length"],
+ ["eval","location.href=location.pathname + '?topik=dns#langkah-tiers'; 'legacy'"],["wait",3000],["eval","'LEGACY ' + S()"],
+ ["eval","location.href=location.pathname + '?topik=dns&langkah=nggak-ada'; 'bad'"],["wait",3000],["eval","'UNKNOWN ' + S() + ' | ' + (document.querySelector('.notice')||{textContent:'no notice'}).textContent"],
+ ["eval","location.href=location.pathname + '?topik=nope'; 'badtopic'"],["wait",2000],["eval","'NOTOPIC ' + document.querySelector('h1').textContent"]
+]
