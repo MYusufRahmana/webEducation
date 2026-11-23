@@ -2,7 +2,9 @@
  * Object storage simulation (S3-style, as in MinIO, Cloudflare R2 or Amazon S3): pure, deterministic,
  * event driven.
  *
- * Clients (the application server, or a user's browser holding a temporary link) send requests to
+ * The application keeps small records in a database (which file belongs to which concert: its key)
+ * and the files themselves in object storage. Clients (the application server, or a user's browser
+ * holding a temporary link) send requests to
  * the storage service. Objects live in a bucket under a key. Each object is written as 4 shards
  * (2 data + 2 parity, like erasure coding in MinIO) on 4 drives: a write needs 3 drives up, a read
  * needs any 2. With versioning on, writing the same key keeps the old version.
@@ -72,14 +74,36 @@ export type OsAction =
   | { at: number; kind: "get"; key: string }
   | { at: number; kind: "presign"; key: string }
   | { at: number; kind: "download" }
-  | { at: number; kind: "drive"; drive: DriveId; up: boolean };
+  | { at: number; kind: "drive"; drive: DriveId; up: boolean }
+  /** The application writes a small record into its database (it notes the file's key). */
+  | { at: number; kind: "db-write"; label: string; key: string }
+  /** The application looks a record up in its database, then fetches that key from storage. */
+  | { at: number; kind: "db-read"; label: string };
+
+/** A small database record: what it is about, and the key of its file in object storage. */
+export interface Row {
+  label: string;
+  key: string;
+}
+
+export interface DbOp {
+  id: number;
+  kind: "write" | "read";
+  label: string;
+  key: string | null;
+  phase: "to-db" | "to-app" | "done";
+  phaseAt: number;
+  phaseEnd: number;
+  doneAt: number | null;
+}
 
 export type OsLog =
   | { at: number; kind: "request"; seq: number; op: OpKind; from: From; key: string }
   | { at: number; kind: "stored"; seq: number; key: string; version: number; drives: number }
   | { at: number; kind: "served"; seq: number; key: string; status: Status; from: From; version: number | null }
   | { at: number; kind: "link"; seq: number; key: string; expiresAt: number }
-  | { at: number; kind: "drive"; drive: DriveId; up: boolean };
+  | { at: number; kind: "drive"; drive: DriveId; up: boolean }
+  | { at: number; kind: "db"; op: "write" | "read"; label: string; key: string | null };
 
 export interface OsSim {
   t: number;
@@ -96,17 +120,19 @@ export interface OsSim {
   requests: number;
   failed: number;
   lastStatus: Status | null;
+  rows: Row[];
+  dbOps: DbOp[];
 }
 
 const EPS = 1e-9;
 const KEEP_DONE = 2.2;
 const KEEP_LOG = 120;
 
-export function createOsSim(options: { params?: Partial<OsParams>; script?: OsAction[]; seed?: Record<string, number> } = {}): OsSim {
+export function createOsSim(options: { params?: Partial<OsParams>; script?: OsAction[]; seed?: Record<string, number>; rows?: Row[] } = {}): OsSim {
   const sim: OsSim = {
     t: 0,
     params: { ...OS_PARAMS, ...options.params },
-    bucket: "foto-toko",
+    bucket: "konser-senja",
     objects: {},
     drives: { D1: true, D2: true, D3: true, D4: true },
     ops: [],
@@ -118,6 +144,8 @@ export function createOsSim(options: { params?: Partial<OsParams>; script?: OsAc
     requests: 0,
     failed: 0,
     lastStatus: null,
+    rows: [...(options.rows ?? [])],
+    dbOps: [],
   };
   // objects already in the bucket when the step starts
   for (const [key, sizeMb] of Object.entries(options.seed ?? {})) sim.objects[key] = [{ v: 1, sizeMb, at: 0, drives: [...DRIVES] }];
@@ -231,8 +259,33 @@ function step(sim: OsSim, op: Op) {
   }
 }
 
+function startDb(sim: OsSim, kind: "write" | "read", label: string, key: string | null) {
+  const op: DbOp = { id: sim.nextId++, kind, label, key, phase: "to-db", phaseAt: sim.t, phaseEnd: sim.t + sim.params.hop, doneAt: null };
+  sim.dbOps.push(op);
+  return op;
+}
+
+function stepDb(sim: OsSim, op: DbOp) {
+  if (op.phase === "to-db") {
+    if (op.kind === "write" && op.key) sim.rows = [...sim.rows.filter((r) => r.label !== op.label), { label: op.label, key: op.key }];
+    if (op.kind === "read") op.key = sim.rows.find((r) => r.label === op.label)?.key ?? null;
+    push(sim, { at: sim.t, kind: "db", op: op.kind, label: op.label, key: op.key });
+    op.phase = "to-app";
+    op.phaseAt = sim.t;
+    op.phaseEnd = sim.t + sim.params.hop;
+    return;
+  }
+  op.phase = "done";
+  op.doneAt = sim.t;
+  op.phaseEnd = Infinity;
+  // with the key from the database, the application asks storage for the file
+  if (op.kind === "read" && op.key) get(sim, op.key);
+}
+
 function apply(sim: OsSim, action: OsAction) {
-  if (action.kind === "put") put(sim, action.key, action.sizeMb);
+  if (action.kind === "db-write") startDb(sim, "write", action.label, action.key);
+  else if (action.kind === "db-read") startDb(sim, "read", action.label, null);
+  else if (action.kind === "put") put(sim, action.key, action.sizeMb);
   else if (action.kind === "get") get(sim, action.key);
   else if (action.kind === "presign") presign(sim, action.key);
   else if (action.kind === "download") download(sim);
@@ -251,12 +304,17 @@ export function advance(sim: OsSim, dt: number): OsSim {
       if (op.phase === "done" || op.phaseEnd > until + EPS) continue;
       if (!best || op.phaseEnd < best.at - EPS) best = { at: op.phaseEnd, run: () => step(sim, op) };
     }
+    for (const op of sim.dbOps) {
+      if (op.phase === "done" || op.phaseEnd > until + EPS) continue;
+      if (!best || op.phaseEnd < best.at - EPS) best = { at: op.phaseEnd, run: () => stepDb(sim, op) };
+    }
     if (!best) break;
     sim.t = Math.max(sim.t, best.at);
     best.run();
   }
   sim.t = until;
   sim.ops = sim.ops.filter((op) => op.doneAt === null || sim.t - op.doneAt < KEEP_DONE);
+  sim.dbOps = sim.dbOps.filter((op) => op.doneAt === null || sim.t - op.doneAt < KEEP_DONE);
   return sim;
 }
 
@@ -264,4 +322,4 @@ export function advance(sim: OsSim, dt: number): OsSim {
 export const totalMb = (sim: OsSim) => Object.values(sim.objects).reduce((sum, versions) => sum + versions.reduce((s, v) => s + v.sizeMb, 0), 0);
 export const keys = (sim: OsSim) => Object.keys(sim.objects);
 export const activeLink = (sim: OsSim) => [...sim.links].reverse().find((link) => link.givenAt !== null) ?? null;
-export const STATUS_TEXT: Record<Status, string> = { 200: "200 OK", 403: "403 ditolak", 404: "404 tidak ada", 503: "503 tidak tersedia" };
+export const STATUS_TEXT: Record<Status, string> = { 200: "berhasil (200)", 403: "ditolak (403)", 404: "tidak ada (404)", 503: "tidak tersedia (503)" };

@@ -10,6 +10,11 @@ export interface SystemSpec<S> {
   analogyLabel: string;
   /** Extra room the camera leaves around the framed parts, in viewBox units (default 88 × 74). */
   cameraPad?: [number, number];
+  /**
+   * Buttons drawn inside the figure carry `data-action`; clicking one (or pressing Enter/Space on it)
+   * calls this with the action name. The topic decides what the action does to its simulation.
+   */
+  onAction?: (action: string, runtime: FigureStageProps["runtime"]) => void;
 }
 
 /** Patch attributes in place: live tokens keep their DOM nodes and scene animations can finish. */
@@ -115,9 +120,14 @@ export function SystemStage<S>({ spec, runtime, highlight, selected, onPart, rep
     };
     redraw.current=()=>{if(last)paint(last);};
     const detach=runtime.addDrawer((sim,_dt,info)=>{visual.current.reduced=info.reduced;paint(sim as unknown as S);});
-    const click=(event:MouseEvent)=>{const part=(event.target as Element).closest<SVGElement>('[data-part]')?.dataset.part;if(part)onPartRef.current(part);};
+    // buttons inside the figure: mouse, touch and keyboard alike
+    const action=(target:EventTarget|null)=>(target as Element|null)?.closest<SVGElement>('[data-action]')?.dataset.action;
+    const run=(name:string)=>{runtime.actingFromFigure=true;try{spec.onAction!(name,runtime);}finally{queueMicrotask(()=>{runtime.actingFromFigure=false;});}};
+    const click=(event:MouseEvent)=>{const name=action(event.target);if(name&&spec.onAction){run(name);return;}const part=(event.target as Element).closest<SVGElement>('[data-part]')?.dataset.part;if(part)onPartRef.current(part);};
+    const key=(event:KeyboardEvent)=>{if(event.key!=='Enter'&&event.key!==' ')return;const name=action(event.target);if(name&&spec.onAction){event.preventDefault();event.stopPropagation();run(name);}};
     element.addEventListener('click',click);
-    return()=>{element.removeEventListener('click',click);detach();for(const node of nodes.values())node.getAnimations().forEach(a=>a.cancel());element.innerHTML='';};
+    element.addEventListener('keydown',key);
+    return()=>{element.removeEventListener('click',click);element.removeEventListener('keydown',key);detach();for(const node of nodes.values())node.getAnimations().forEach(a=>a.cancel());element.innerHTML='';};
   },[runtime,spec]);
   useEffect(()=>{
     visual.current={...visual.current,analogy:representation==='analogy',highlight:new Set(highlight),selected};

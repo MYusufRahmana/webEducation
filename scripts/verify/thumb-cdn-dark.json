@@ -1,0 +1,1 @@
+[["wait", 2500], ["eval", "try{localStorage.setItem('webedukasi.view','system')}catch(e){}; location.search='?topik=cdn&langkah=cache-miss'; 'go'"], ["wait", 6500], ["eval", "[...document.querySelectorAll('.stage-buttons button')].find(b => /Jeda/.test(b.textContent)).click(); 'p'"], ["wait", 900], ["shot", "public/cdn-dark.png", ".iso-art", 1.5]]

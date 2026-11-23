@@ -11,9 +11,9 @@ const same = (text: string): Bilingual => ({ id: text, en: text });
 const GLOSSARY: Record<string, { term: Bilingual; definition: Bilingual }> = {
   "object-storage": { term: same("Object storage"), definition: same("Penyimpanan untuk file utuh (foto, video, dokumen, cadangan). File disimpan sebagai objek di dalam bucket dan diambil lewat key, bukan lewat tabel atau folder.") },
   "api-s3": { term: same("API S3"), definition: same("Cara bicara dengan object storage yang dipopulerkan Amazon S3: PUT untuk menyimpan, GET untuk mengambil, DELETE untuk menghapus. MinIO dan Cloudflare R2 memakai API yang sama.") },
-  bucket: { term: same("Bucket"), definition: same("Wadah objek milik satu aplikasi atau proyek, misalnya foto-toko. Namanya dipakai di setiap permintaan.") },
+  bucket: { term: same("Bucket"), definition: same("Wadah file milik satu aplikasi atau proyek, misalnya konser-senja. Namanya dipakai setiap kali menyimpan atau mengambil file.") },
   object: { term: same("Objek"), definition: same("Satu file yang disimpan utuh, beserta metadata-nya.") },
-  key: { term: same("Key"), definition: same("Nama lengkap objek di dalam bucket, misalnya foto/kucing.jpg. Garis miring hanya bagian dari nama.") },
+  key: { term: same("Key"), definition: same("Nama lengkap file di dalam bucket, misalnya poster/senja.jpg. Garis miring hanya bagian dari nama, bukan folder sungguhan.") },
   metadata: { term: same("Metadata"), definition: same("Keterangan tentang objek: tipe file, ukuran, waktu diunggah, dan label tambahan.") },
   "erasure-coding": { term: same("Erasure coding"), definition: same("Cara memecah file menjadi bagian data dan bagian cadangan hasil hitungan, lalu menyebarkannya ke beberapa drive. File bisa dibangun ulang walau sebagian drive hilang.") },
   "presigned-url": { term: same("Link sementara (presigned URL)"), definition: same("Link ke satu objek yang ditandatangani layanan dan hanya berlaku sampai waktu tertentu. Siapa pun yang memegangnya bisa mengunduh tanpa akun.") },
@@ -21,53 +21,57 @@ const GLOSSARY: Record<string, { term: Bilingual; definition: Bilingual }> = {
 };
 
 const PARTS: Record<string, { name: Bilingual; role: Bilingual }> = {
-  app: { name: same("Aplikasi"), role: same("Server aplikasi yang menyimpan dan mengambil file atas nama pengguna.") },
-  browser: { name: same("Browser pengguna"), role: same("Mengunduh langsung dari penyimpanan bila memegang link sementara.") },
-  api: { name: same("Layanan object storage"), role: same("Menerima permintaan API S3, mencari key, dan mengatur bagian file di drive.") },
-  bucket: { name: same("Bucket"), role: same("Wadah objek milik aplikasi.") },
-  objects: { name: same("Objek"), role: same("File yang disimpan, masing-masing dengan key-nya.") },
-  drives: { name: same("Drive"), role: same("Tempat bagian-bagian file benar-benar disimpan.") },
-  shards: { name: same("Bagian file"), role: same("Potongan data dan cadangan yang dikirim ke tiap drive.") },
-  link: { name: same("Link sementara"), role: same("Akses ke satu objek yang berlaku sampai waktu tertentu.") },
-  versions: { name: same("Versi objek"), role: same("Isi lama dan baru dari key yang sama.") },
+  app: { name: same("Aplikasi"), role: same("Program website tiket. Ia yang menyimpan file, mencatat key-nya di database, dan mengambil file saat halaman dibuka.") },
+  db: { name: same("Database"), role: same("Tempat catatan kecil: nama konser, harga, pesanan, dan key file poster. Bukan tempat menyimpan posternya.") },
+  api: { name: same("Object storage"), role: same("Layanan penyimpan file besar, seperti Amazon S3, Cloudflare R2, atau MinIO. Menerima perintah simpan dan ambil.") },
+  bucket: { name: same("Bucket"), role: same("Wadah file milik satu aplikasi, di sini bernama konser-senja. Isinya benar-benar tersimpan di drive-drive di dalam bingkainya.") },
+  objects: { name: same("File dan key"), role: same("Setiap file punya key, nama lengkapnya, misalnya poster/senja.jpg.") },
+  drives: { name: same("Drive"), role: same("Tempat bagian-bagian file benar-benar disimpan. Satu drive rusak tidak menghilangkan file.") },
+  shards: { name: same("Bagian file"), role: same("Potongan file yang dikirim ke tiap drive. Dua bagian saja cukup untuk menyusun file kembali.") },
+  browser: { name: same("Browser pembeli"), role: same("Bisa mengunduh e-tiket langsung dari object storage bila memegang link sementara.") },
+  link: { name: same("Link sementara"), role: same("Izin mengunduh satu file yang hanya berlaku sampai waktu tertentu.") },
+  versions: { name: same("Versi file"), role: same("Isi lama dan baru dari key yang sama, bila versioning aktif.") },
 };
 
 const VIEW_PARTS: ViewParts = {
-  app: { analogy: "Toko online", system: "Aplikasi", role: PARTS.app.role.id },
-  browser: { analogy: "Pembeli", system: "Browser pengguna", role: PARTS.browser.role.id },
-  api: { analogy: "Loket penitipan", system: "Layanan object storage (API S3)", role: PARTS.api.role.id },
+  app: { analogy: "Kasir toko", system: "Aplikasi", role: PARTS.app.role.id },
+  db: { analogy: "Buku kasir", system: "Database", role: PARTS.db.role.id },
+  api: { analogy: "Loket penitipan", system: "Object storage (S3, R2, MinIO)", role: PARTS.api.role.id },
   bucket: { analogy: "Lemari milik toko", system: "Bucket", role: PARTS.bucket.role.id },
-  objects: { analogy: "Kotak berlabel", system: "Objek dan key", role: PARTS.objects.role.id },
+  objects: { analogy: "Kotak berlabel", system: "File dan key", role: PARTS.objects.role.id },
   drives: { analogy: "Gudang 1–4", system: "Drive 1–4", role: PARTS.drives.role.id },
-  shards: { analogy: "Potongan dan cadangan", system: "Bagian file (shard)", role: PARTS.shards.role.id },
-  link: { analogy: "Tiket ambil berbatas waktu", system: "Link sementara (presigned URL)", role: PARTS.link.role.id },
-  versions: { analogy: "Kotak lama dan baru", system: "Versi objek", role: PARTS.versions.role.id },
+  shards: { analogy: "Bagian kotak", system: "Bagian file", role: PARTS.shards.role.id },
+  browser: { analogy: "Pembeli", system: "Browser pembeli", role: PARTS.browser.role.id },
+  link: { analogy: "Tiket ambil berbatas waktu", system: "Link sementara", role: PARTS.link.role.id },
+  versions: { analogy: "Kotak lama dan baru", system: "Versi file", role: PARTS.versions.role.id },
 };
 
 export function osStateTitle(sim: OsSim) {
+  const db = sim.dbOps.find((op) => op.phase !== "done");
+  if (db) return db.kind === "write" ? "Aplikasi mencatat key poster di database" : db.phase === "to-db" ? "Aplikasi bertanya key poster ke database" : `Database menjawab: ${db.key ?? "tidak ada"}`;
   const active = sim.ops.find((op) => op.phase !== "done");
   const down = DRIVES.filter((id) => !sim.drives[id]).length;
   if (active) {
-    const what = active.kind === "put" ? "menyimpan" : active.kind === "presign" ? "membuat link untuk" : "mengambil";
+    const what = active.kind === "put" ? "menyimpan" : active.kind === "presign" ? "meminta link untuk" : "mengambil";
     const who = active.from === "browser" ? "Browser" : "Aplikasi";
     return `${who} ${what} ${active.key}`;
   }
-  if (down) return `${down} drive mati · ${4 - down} aktif`;
-  return keys(sim).length ? `${keys(sim).length} objek di bucket ${sim.bucket}` : `Bucket ${sim.bucket} masih kosong`;
+  if (down) return `${down} drive rusak · ${4 - down} aktif`;
+  return keys(sim).length ? `${keys(sim).length} file di bucket ${sim.bucket}` : `Bucket ${sim.bucket} masih kosong`;
 }
 
 const readout = (sim: OsSim, lang: Lang) => `t = ${formatNumber(lang, sim.t, 1)} dtk · ${sim.requests} permintaan · ${sim.failed} gagal`;
 
 function Details({ sim, runtime, mode }: DetailsProps<OsSim>) {
   const link = activeLink(sim);
-  const key = keys(sim)[0] ?? "foto/kucing.jpg";
+  const key = keys(sim)[0] ?? "poster/senja.jpg";
   return (
     <>
       {mode === "explore" ? (
         <div className="explore">
           <div className="control">
             <span className="control-label">Aplikasi</span>
-            <button type="button" className="button" onClick={() => runtime.act((s: OsSim) => put(s, `foto/baru-${s.nextSeq}.jpg`, 2))}>
+            <button type="button" className="button" onClick={() => runtime.act((s: OsSim) => put(s, `foto/penonton-${s.nextSeq}.jpg`, 2))}>
               Unggah foto baru
             </button>
             <button type="button" className="button" onClick={() => runtime.act((s: OsSim) => put(s, key, (latest(s, key)?.sizeMb ?? 2) + 1))}>
@@ -93,7 +97,7 @@ function Details({ sim, runtime, mode }: DetailsProps<OsSim>) {
                 <span className="status-mark" aria-hidden="true">
                   {sim.drives[id] ? "●" : "○"}
                 </span>
-                {sim.drives[id] ? `Matikan ${id.slice(1)}` : `Hidupkan ${id.slice(1)}`}
+                {sim.drives[id] ? `Rusakkan drive ${id.slice(1)}` : `Pulihkan drive ${id.slice(1)}`}
               </button>
             ))}
           </div>
@@ -142,8 +146,8 @@ export const objectStorage: TopicModule<OsSim> = {
   aspect: 640 / 420,
   meta: {
     category: same("Data dan Penyimpanan"),
-    title: same("Object Storage"),
-    summary: same("Di mana foto, video, dan dokumen disimpan? Lihat cara kerja object storage seperti MinIO, Cloudflare R2, dan Amazon S3."),
+    title: same("Object Storage: Di Mana Poster dan Video Disimpan?"),
+    summary: same("Website tiket menyimpan catatan kecil di database dan file besar di object storage. Lihat cara keduanya bekerja sama, dari poster konser sampai unduhan e-tiket."),
     level: same("Dasar"),
     minutes: 9,
     outcomes: { id: OS_LESSON.outcomes, en: OS_LESSON.outcomes },
@@ -152,13 +156,13 @@ export const objectStorage: TopicModule<OsSim> = {
   closing: { title: same("Ringkasan"), points: { id: OS_LESSON.summary, en: OS_LESSON.summary }, limitsTitle: same("Batas penyederhanaan"), limits: { id: OS_LESSON.simplifications, en: OS_LESSON.simplifications } },
   glossary: GLOSSARY,
   parts: PARTS,
-  partOrder: ["app", "browser", "api", "bucket", "objects", "drives", "shards", "link", "versions"],
+  partOrder: ["app", "db", "api", "bucket", "objects", "drives", "shards", "browser", "link", "versions"],
   legend: [],
   dualView: true,
   viewParts: VIEW_PARTS,
   viewLegend: [
     { swatch: "request", text: "permintaan / bagian file" },
-    { swatch: "response", text: "balasan 200 OK" },
+    { swatch: "response", text: "jawaban berhasil" },
     { swatch: "referral", text: "link sementara" },
     { swatch: "fail", text: "ditolak / gagal" },
   ],
@@ -172,7 +176,8 @@ export const objectStorage: TopicModule<OsSim> = {
   announce: (raw) => {
     const entry = raw as OsLog;
     if (entry.kind === "served") return same(`${entry.from === "browser" ? "Browser" : "Aplikasi"} menerima ${STATUS_TEXT[entry.status]} untuk ${entry.key}.`);
-    if (entry.kind === "drive") return same(entry.up ? `Drive ${entry.drive.slice(1)} hidup kembali.` : `Drive ${entry.drive.slice(1)} mati.`);
+    if (entry.kind === "drive") return same(entry.up ? `Drive ${entry.drive.slice(1)} pulih.` : `Drive ${entry.drive.slice(1)} rusak.`);
+    if (entry.kind === "db") return same(entry.op === "write" ? `Database mencatat ${entry.label} → ${entry.key}.` : `Database menjawab key ${entry.key ?? "tidak ada"}.`);
     return null;
   },
   stateTitle: osStateTitle,
@@ -186,10 +191,10 @@ export const objectStorage: TopicModule<OsSim> = {
   metrics: (sim): Metric[] => {
     const up = DRIVES.filter((id) => sim.drives[id]).length;
     return [
-      { label: "Objek", value: String(keys(sim).length), unit: "file" },
+      { label: "File di bucket", value: String(keys(sim).length), unit: "file" },
       { label: "Data tersimpan", value: formatNumber("id", totalMb(sim), 0), unit: "MB" },
       { label: "Drive aktif", value: `${up} dari 4`, warn: up < 4 },
-      { label: "Respons terakhir", value: sim.lastStatus ? STATUS_TEXT[sim.lastStatus] : null, warn: sim.lastStatus !== null && sim.lastStatus !== 200 },
+      { label: "Jawaban terakhir", value: sim.lastStatus ? STATUS_TEXT[sim.lastStatus] : null, warn: sim.lastStatus !== null && sim.lastStatus !== 200 },
     ];
   },
   docTitle: same("Object Storage · Alur"),

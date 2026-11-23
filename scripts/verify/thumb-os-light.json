@@ -1,0 +1,1 @@
+[["wait", 2500], ["eval", "try{localStorage.setItem('webedukasi.view','system')}catch(e){}; location.search='?topik=object-storage&langkah=tersebar'; 'go'"], ["wait", 6200], ["eval", "[...document.querySelectorAll('.stage-buttons button')].find(b => /Jeda/.test(b.textContent)).click(); 'p'"], ["wait", 900], ["shot", "public/object-storage-light.png", ".iso-art", 1.5]]

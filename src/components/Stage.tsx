@@ -189,10 +189,10 @@ export function LearningStage({
     };
   }, [runtime]);
 
-  // changing a parameter means exploring: show its controls
+  // changing a parameter means exploring: show its controls (unless they are buttons inside the figure)
   useEffect(() => {
-    if (mode === "explore") setDrawer(true);
-  }, [mode]);
+    if (mode === "explore" && !runtime.actingFromFigure) setDrawer(true);
+  }, [mode, runtime]);
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const drawerOpener = useRef<HTMLButtonElement>(null);

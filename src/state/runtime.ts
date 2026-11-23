@@ -163,6 +163,9 @@ export class Runtime {
    * A change made by the reader in free exploration: switches to exploration (if needed), applies the
    * change to the simulation and returns its result.
    */
+  /** Set while a button drawn inside the figure acts: its controls are already visible, no drawer needed. */
+  actingFromFigure = false;
+
   act<T>(change: (sim: any) => T): T {
     this.explore();
     const result = change(this.sim);
