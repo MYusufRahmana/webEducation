@@ -5,6 +5,8 @@ import { objectStorage } from "./object-storage";
 import { https } from "./https";
 import { replication } from "./replication";
 import { cache } from "./cache";
+import { rateLimit } from "./rate-limit";
+import { waitingRoom } from "./waiting-room";
 import type { TopicModule } from "./types";
 
 /** Categories in curriculum order. Only categories with at least one lesson are shown. */
@@ -12,13 +14,16 @@ export const CATEGORIES = [
   { id: "jaringan", name: "Jaringan", description: "Bagaimana permintaan menemukan dan mencapai server." },
   { id: "data", name: "Data dan Penyimpanan", description: "Di mana data dan file disimpan, dan bagaimana mereka tetap aman." },
   { id: "komunikasi", name: "Komunikasi", description: "Bagaimana layanan bertukar pekerjaan tanpa saling menunggu." },
-  { id: "keamanan", name: "Keamanan", description: "Bagaimana data dilindungi dalam perjalanan." },
+  { id: "keamanan", name: "Keamanan", description: "Bagaimana data dan layanan dilindungi." },
 ];
 
 /** Published lessons, in curriculum order. */
-export const TOPICS: TopicModule<any>[] = [loadBalancer, dns, messageQueue, objectStorage, replication, cache, https];
+export const TOPICS: TopicModule<any>[] = [loadBalancer, dns, messageQueue, objectStorage, replication, cache, https, rateLimit, waitingRoom];
 
-export const topicBySlug = (slug: string) => TOPICS.find((topic) => topic.slug === slug) ?? null;
+/** Old lesson addresses that now live inside another lesson. */
+const SLUG_ALIASES: Record<string, string> = { "dns-sehari-hari": "dns" };
+
+export const topicBySlug = (slug: string) => TOPICS.find((topic) => topic.slug === (SLUG_ALIASES[slug] ?? slug)) ?? null;
 export const categoryOf = (topic: TopicModule<any>) => CATEGORIES.find((category) => category.id === topic.lesson.category)!;
 
 /** Categories that have lessons, each with its lessons. */

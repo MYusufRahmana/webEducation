@@ -233,7 +233,7 @@ export function LearningStage({
               Analogi sehari-hari
             </button>
             <button type="button" aria-pressed={view === "system"} onClick={() => setView("system")}>
-              Sistem sebenarnya
+              {topic.systemViewLabel ?? "Sistem sebenarnya"}
             </button>
           </div>
         ) : null}
@@ -253,7 +253,7 @@ export function LearningStage({
                 <thead>
                   <tr>
                     <th scope="col">Analogi sehari-hari</th>
-                    <th scope="col">Sistem sebenarnya</th>
+                    <th scope="col">{topic.systemViewLabel ?? "Sistem sebenarnya"}</th>
                   </tr>
                 </thead>
                 <tbody>

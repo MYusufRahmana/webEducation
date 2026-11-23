@@ -1072,3 +1072,46 @@
   stroke: none;
   pointer-events: none;
 }
+/* flat cards inside system figures (HTTPS: ticket page, info card) */
+.sys-card .sys-card-bg { fill: #fffdf8; stroke: var(--sys-ink); stroke-width: 1.4; }
+.sys-card .sys-card-bar { fill: #f1ebe1; stroke: #cfc5b6; stroke-width: 1; }
+.sys-card .sys-card-ring { fill: none; stroke: #e0574a; stroke-width: 2.2; stroke-dasharray: 5 3; }
+.sys-card .sys-card-text { font: 11px var(--mono); fill: #2a2722; }
+.sys-card .sys-card-text.strong { font-weight: 700; }
+.sys-card .sys-card-text.ok { fill: #2e7a3a; font-weight: 700; }
+.sys-card .sys-card-text.bad { fill: #b8372b; font-weight: 700; }
+.sys-card .sys-card-text.warn { fill: #8a6410; font-weight: 700; }
+.sys-card .sys-card-text.button { fill: #fff; font-weight: 700; }
+.sys-card .sys-card-button { fill: #3b6fb6; }
+.sys-card .sys-card-button.ok { fill: #2e7a3a; }
+.sys-card .sys-card-chip { font: 700 10.5px var(--mono); }
+.sys-card .sys-card-chip[data-tone="bad"], .sys-card .sys-card-icon[data-tone="bad"] { fill: #b8372b; stroke: #b8372b; }
+.sys-card .sys-card-chip[data-tone="warn"], .sys-card .sys-card-icon[data-tone="warn"] { fill: #8a6410; stroke: #8a6410; }
+.sys-card .sys-card-chip[data-tone="ok"], .sys-card .sys-card-icon[data-tone="ok"] { fill: #2e7a3a; stroke: #2e7a3a; }
+.sys-card .sys-card-icon { fill: none !important; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sys-card .sys-card-chip { stroke: none !important; }
+.sys-card .sys-card-option { opacity: 0.35; }
+.sys-card .sys-card-option[data-on] { opacity: 1; }
+.sys-card[data-hl] .sys-card-bg { stroke-width: 2.4; }
+.sys-card-note text { font: 10px var(--mono); fill: var(--text-2); }
+.sys-card text.sys-card-text { text-anchor: start; font-size: 11px; }
+.sys-card text.sys-card-chip { text-anchor: end; }
+.sys-pill.sys-card rect.sys-card-bg { fill: #fffdf8; }
+.sys-pill.sys-card rect.sys-card-bar { fill: #f1ebe1; }
+.sys-pill.sys-card rect.sys-card-ring { fill: none; }
+.sys-pill.sys-card rect.sys-card-button { fill: #3b6fb6; stroke: none; }
+.sys-pill.sys-card rect.sys-card-button.ok { fill: #2e7a3a; }
+.sys-pill.sys-card text.sys-card-text.button { fill: #fff; }
+/* the browser's page and the info card must always stay readable: never dimmed by step focus */
+.sys-svg[data-focus] .sys-pill.sys-card[data-part] { opacity: 1; }
+:root[data-theme="dark"] .sys-pill.sys-card rect.sys-card-bg { fill: #fffdf8; }
+:root[data-theme="dark"] .sys-pill.sys-card rect.sys-card-bar { fill: #f1ebe1; }
+:root[data-theme="dark"] .sys-pill.sys-card rect.sys-card-ring { fill: none; }
+:root[data-theme="dark"] .sys-pill.sys-card rect.sys-card-button { fill: #3b6fb6; }
+:root[data-theme="dark"] .sys-pill.sys-card rect.sys-card-button.ok { fill: #2e7a3a; }
+/* waiting room: Andi stands out by ring, star and name, not by colour alone */
+.wr-ring { fill: none; stroke: var(--sys-ink); stroke-width: 1.8; stroke-dasharray: 4 3; }
+.wr-star { font-size: 13px; text-anchor: middle; fill: #c98a12; stroke: var(--sys-ink); stroke-width: 0.6; }
+.wr-badge circle { fill: #fffdf8; stroke: var(--sys-ink); stroke-width: 1.2; }
+.wr-badge.andi circle { fill: #fbd9b8; stroke-width: 2; }
+.wr-badge text { font: 700 9.5px var(--mono); text-anchor: middle; fill: #1d1b18; }

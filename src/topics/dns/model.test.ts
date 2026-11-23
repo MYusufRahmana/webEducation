@@ -1,93 +1,92 @@
 import { describe, expect, it } from "vitest";
-import { advance, ask, changeRecord, createDnsSim, type DnsLog, type DnsSim } from "./model";
-import { CHANGE_AT, DNS_STEPS, HOLD_CACHE, HOLD_FIRST, HOLD_RESOLVER } from "./scenarios";
+import { ADDRESSES, advance, BLOCKED, createDnsSim, SITE, TYPO, visit, WARNING_IP, type DnsLog, type DnsSim } from "./model";
+import { DNS_STEPS } from "./scenarios";
 
-const of = <K extends DnsLog["kind"]>(sim: DnsSim, kind: K) => sim.log.filter((entry): entry is Extract<DnsLog, { kind: K }> => entry.kind === kind);
-const until = (index: number, t: number) => {
-  const sim = DNS_STEPS[index].build();
-  return advance(sim, t - sim.t);
+const of = <K extends DnsLog["kind"]>(sim: DnsSim, kind: K) => sim.log.filter((e): e is Extract<DnsLog, { kind: K }> => e.kind === kind);
+const step = (key: string) => DNS_STEPS.find((s) => s.key === key)!;
+/** holdAt is an absolute scene time, as in the runtime. */
+const play = (s: (typeof DNS_STEPS)[number]) => {
+  const sim = s.build();
+  return advance(sim, s.holdAt - sim.t);
 };
+const run = (key: string) => play(step(key));
 
-describe("a first lookup", () => {
-  const sim = until(4, HOLD_FIRST);
-  it("misses both caches and walks root, TLD and authoritative in that order", () => {
-    expect(of(sim, "local")[0].hit).toBe(false);
-    expect(of(sim, "resolver")[0].hit).toBe(false);
-    expect(of(sim, "referral").map((entry) => entry.from)).toEqual(["root", "tld"]);
-    expect(of(sim, "authoritative").length).toBe(1);
-    const answer = of(sim, "answer")[0];
-    expect(answer.source).toBe("authoritative");
+describe("DNS lesson model", () => {
+  it("step 1: with nothing cached the question leaves the device for the resolver", () => {
+    const sim = run("butuh-alamat");
+    expect(of(sim, "cache-hit")).toHaveLength(0);
+    expect(sim.visits[0].stage).toBe("resolver-check");
+  });
+  it("steps 2–4: the resolver walks root → TLD → authoritative, one referral each, then caches the answer", () => {
+    const sim = run("authoritative");
+    expect(of(sim, "referral").map((e) => e.from)).toEqual(["root", "tld"]);
+    expect(of(sim, "answer")[0]).toEqual(expect.objectContaining({ address: ADDRESSES[0] }));
     expect(sim.serverHops).toBe(3);
+    expect(sim.resolver[SITE]?.address).toBe(ADDRESSES[0]);
   });
-  it("stores the answer in both caches, the client's for no longer than its limit", () => {
-    expect(sim.resolver).not.toBeNull();
-    expect(sim.local).not.toBeNull();
-    expect(sim.resolver!.expiresAt - sim.resolver!.storedAt).toBeCloseTo(sim.params.ttl);
-    expect(sim.local!.expiresAt - sim.local!.storedAt).toBeLessThanOrEqual(sim.params.localMax + 1e-9);
-    expect(sim.local!.expiresAt).toBeLessThanOrEqual(sim.resolver!.expiresAt + 1e-9);
+  it("step 5: DNS only gives the address; the browser then fetches the page from the site itself", () => {
+    const sim = run("buka-situs");
+    expect(sim.screen).toEqual(expect.objectContaining({ outcome: "page", stale: false }));
+    expect(sim.device[SITE]?.address).toBe(ADDRESSES[0]);
   });
-});
-
-describe("caches", () => {
-  it("answers repeated questions from the client's cache without any network trip", () => {
-    const sim = until(5, HOLD_CACHE);
-    const local = of(sim, "answer").filter((entry) => entry.source === "local");
-    expect(local.length).toBe(2);
-    expect(local.every((entry) => entry.took < 0.5)).toBe(true);
-    expect(sim.serverHops).toBe(3); // still only the first lookup's three visits
-  });
-
-  it("answers from the resolver's cache once the client's copy has expired", () => {
-    const sim = until(6, HOLD_RESOLVER);
-    const answer = of(sim, "answer").slice(-1)[0];
-    expect(answer.source).toBe("resolver");
-    expect(answer.took).toBeGreaterThan(1);
-    expect(answer.took).toBeLessThan(3);
+  it("step 6: the device's notes answer first, then the resolver's cache; no new server hops", () => {
+    const sim = run("cache");
+    const hits = of(sim, "cache-hit").map((e) => e.where);
+    expect(hits).toEqual(["device", "resolver"]);
     expect(sim.serverHops).toBe(3);
+    expect(sim.pagesOpened).toBe(3);
   });
-
-  it("can give an old address after the record changed, until the TTL runs out", () => {
-    const sim = until(7, 27);
-    const after = of(sim, "answer").filter((entry) => entry.at > CHANGE_AT);
-    expect(after[0].stale).toBe(true);
-    expect(after[0].source).toBe("local");
-    const fresh = after.find((entry) => entry.source === "authoritative")!;
-    expect(fresh.version).toBe(1);
-    expect(fresh.stale).toBe(false);
-    expect(of(sim, "expire").map((entry) => entry.cache)).toContain("resolver");
+  it("step 7: after the move a cached old address leads nowhere; after the TTL the new address is found", () => {
+    const sim = run("ttl");
+    const outcomes = of(sim, "outcome").slice(-2);
+    expect(outcomes[0]).toEqual(expect.objectContaining({ outcome: "site-timeout", stale: true }));
+    expect(outcomes[1]).toEqual(expect.objectContaining({ outcome: "page", stale: false }));
+    expect(of(sim, "answer").slice(-1)[0]?.address).toBe(ADDRESSES[1]);
+    expect(sim.serverHops).toBe(6);
   });
-});
-
-describe("steps", () => {
-  it("each step starts where the previous one holds", () => {
-    for (let i = 1; i < DNS_STEPS.length; i++) expect(DNS_STEPS[i].build().t).toBeLessThanOrEqual(DNS_STEPS[i - 1].holdAt! + 1e-9);
-    for (const step of DNS_STEPS) expect(step.holdAt! > step.build().t).toBe(true);
+  it("step 8: a mistyped name is answered “does not exist” by the TLD; no website is visited", () => {
+    const sim = run("salah-ketik");
+    expect(of(sim, "nxdomain")[0].name).toBe(TYPO);
+    expect(of(sim, "referral").map((e) => e.from)).toEqual(["root"]);
+    expect(sim.screen?.outcome).toBe("not-found");
+    expect(sim.device[TYPO]).toBeUndefined();
   });
-  it("the root and TLD steps end with a referral back at the resolver", () => {
-    const root = until(2, DNS_STEPS[2].holdAt!);
-    expect(of(root, "referral").map((entry) => entry.from)).toEqual(["root"]);
-    const tld = until(3, DNS_STEPS[3].holdAt!);
-    expect(of(tld, "referral").map((entry) => entry.from)).toEqual(["root", "tld"]);
-    expect(of(tld, "authoritative").length).toBe(0);
+  it("step 9: a blocked name gets the warning page address, without asking the hierarchy", () => {
+    const sim = run("diblokir");
+    expect(of(sim, "blocked")[0].name).toBe(BLOCKED);
+    expect(sim.serverHops).toBe(0);
+    expect(sim.screen?.outcome).toBe("blocked-page");
+    expect(Object.values(sim.device).some((e) => e.address === WARNING_IP)).toBe(false);
   });
-});
-
-describe("controls", () => {
-  it("is deterministic and independent of frame size", () => {
-    const one = until(7, 30);
-    const many = DNS_STEPS[7].build();
-    while (many.t < 30 - 1e-9) advance(many, Math.min(1 / 60, 30 - many.t));
-    expect(many.serverHops).toBe(one.serverHops);
-    expect(of(many, "answer").map((entry) => entry.source)).toEqual(of(one, "answer").map((entry) => entry.source));
+  it("step 10: when the resolver does not answer, the browser gives up although the site is up", () => {
+    const sim = run("dns-gangguan");
+    expect(sim.siteUp).toBe(true);
+    expect(sim.screen?.outcome).toBe("dns-timeout");
   });
-
-  it("a manual question and a record change behave like the story", () => {
+  it("step 11: DNS answers, but the site does not", () => {
+    const sim = run("situs-mati");
+    expect(of(sim, "cache-hit")[0]).toEqual(expect.objectContaining({ where: "resolver" }));
+    expect(sim.screen?.outcome).toBe("site-timeout");
+  });
+  it("a name off the blocklist resolves normally", () => {
     const sim = createDnsSim();
-    ask(sim);
-    advance(sim, 7);
-    changeRecord(sim);
-    ask(sim);
-    advance(sim, 1);
-    expect(of(sim, "answer").slice(-1)[0].stale).toBe(true);
+    sim.blocklist = [];
+    visit(sim, BLOCKED);
+    advance(sim, 20);
+    expect(sim.screen?.outcome).toBe("site-timeout"); // the demo has no server for that name: only DNS is modelled
+    expect(of(sim, "answer")[0].address).not.toBe(WARNING_IP);
+  });
+  it("the device never keeps an answer longer than the resolver's TTL left", () => {
+    const sim = createDnsSim({ resolverCache: { [SITE]: 3 } });
+    visit(sim, SITE);
+    advance(sim, 3.5);
+    const answered = sim.log.find((e) => e.kind === "cache-hit")!.at;
+    expect(sim.device[SITE]!.expiresAt - sim.device[SITE]!.storedAt).toBeLessThanOrEqual(3 - answered + 1e-9);
+  });
+  it("every scene finishes before it holds, and replays identically", () => {
+    for (const s of DNS_STEPS) {
+      expect(JSON.stringify(play(s).log)).toBe(JSON.stringify(play(s).log));
+    }
+    for (const key of ["buka-situs", "cache", "ttl", "salah-ketik", "diblokir", "dns-gangguan", "situs-mati"]) expect(run(key).visits.every((v) => v.doneAt !== null)).toBe(true);
   });
 });

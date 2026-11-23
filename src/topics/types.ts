@@ -70,6 +70,8 @@ export interface Lesson {
   /** What the simulation leaves out. */
   simplifications: string[];
   outcomes: string[];
+  /** Optional comprehension question shown on the summary page; the answer is revealed on request. */
+  check?: { question: string; answer: string };
 }
 
 /** A value shown above the figure. `value: null` reads "Belum tersedia", never zero. */
@@ -134,6 +136,8 @@ export interface TopicModule<S extends TopicSim = TopicSim> {
   /** Explore controls (shown in free exploration) and the live readouts. */
   Details: ComponentType<DetailsProps<S>>;
   loadFigure: () => Promise<{ default: ComponentType<FigureStageProps> }>;
+  /** Label of the real-system view button (default "Sistem sebenarnya"). */
+  systemViewLabel?: string;
   /** The same simulation drawn as real components ("Sistem sebenarnya"). */
   loadSystem: () => Promise<{ default: ComponentType<FigureStageProps> }>;
   fallbackImage: (theme: "light" | "dark") => string;

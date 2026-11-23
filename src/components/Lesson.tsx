@@ -325,6 +325,14 @@ function Summary({ topic, navigate, onRestart }: { topic: TopicModule<any>; navi
           <li key={point}>{point}</li>
         ))}
       </ul>
+      {lesson.check ? (
+        <details className="more check-question">
+          <summary>Pertanyaan pemahaman: {lesson.check.question}</summary>
+          <p>
+            <strong>Jawaban:</strong> {lesson.check.answer}
+          </p>
+        </details>
+      ) : null}
       <div className="analogy">
         <h3>Analogi: {lesson.analogy.title}</h3>
         <table className="mapping">
