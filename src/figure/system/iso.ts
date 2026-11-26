@@ -99,6 +99,7 @@ const ICONS: Record<string, string> = {
   booth: '<path d="M-8-4h16l-2-4h-12z"/><path d="M-7-4v10h14V-4M-3 6V1h6v5"/>',
   clipboard: '<rect x="-6" y="-6" width="12" height="14" rx="1.5"/><path d="M-2-7h4v2h-4zM-3 0l2 2 4-4"/>',
   pan: '<circle cx="-2" cy="1" r="5"/><path d="M3 1h6"/><path d="M-4-7c0 2 2 2 2 4M0-7c0 2 2 2 2 4"/>',
+  router: '<rect x="-8" y="-2" width="16" height="7" rx="1.5"/><path d="M-4-2v-5M4-2v-5"/><circle cx="-4" cy="1.5" r=".9"/><circle cx="0" cy="1.5" r=".9"/><path d="M3 1.5h3"/>',
   bolt: '<path d="M1.5-8l-6.5 9.5h5L-1 8l6.5-9.5h-5z"/>',
   card: '<rect x="-7" y="-5" width="14" height="10" rx="1.5"/><path d="M-4-1h8M-4 2h5"/>',
 };

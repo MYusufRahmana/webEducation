@@ -54,6 +54,24 @@ export interface LessonStep {
   idea: string;
   /** Optional extra detail behind “Pelajari lebih lanjut”. */
   more?: string[];
+  /** Optional hands-on practice shown as lettered sub-steps (for example SQL to copy). */
+  practice?: PracticeItem[];
+}
+
+/** One sub-step of a practice: code to copy, what each part means, and an optional local demo run. */
+export interface PracticeItem {
+  id: string;
+  title: string;
+  /** Code shown in a readable block with a copy button. */
+  code?: string;
+  /** What to expect when the code runs (described, never faked output). */
+  expect?: string;
+  explain?: string[];
+  /** Pieces of the code, each explained; a piece with `part` highlights that part of the figure. */
+  pieces?: { code: string; text: string; part?: string }[];
+  note?: string;
+  /** Runs an action of the topic in the local demo (never a real database). */
+  run?: { action: string; label: string };
 }
 
 export interface Lesson {
@@ -138,6 +156,10 @@ export interface TopicModule<S extends TopicSim = TopicSim> {
   loadFigure: () => Promise<{ default: ComponentType<FigureStageProps> }>;
   /** Label of the real-system view button (default "Sistem sebenarnya"). */
   systemViewLabel?: string;
+  /** Label of the everyday view button (default "Analogi sehari-hari"). */
+  analogyViewLabel?: string;
+  /** Runs a practice action in the local demo (see PracticeItem.run). */
+  practiceAction?: (action: string, runtime: Runtime) => void;
   /** The same simulation drawn as real components ("Sistem sebenarnya"). */
   loadSystem: () => Promise<{ default: ComponentType<FigureStageProps> }>;
   fallbackImage: (theme: "light" | "dark") => string;

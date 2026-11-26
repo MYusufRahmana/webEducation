@@ -230,7 +230,7 @@ export function LearningStage({
         {topic.dualView && !machineOnly ? (
           <div className="segmented view-toggle" role="group" aria-label="Cara melihat figur">
             <button type="button" aria-pressed={view === "analogy"} onClick={() => setView("analogy")}>
-              Analogi sehari-hari
+              {topic.analogyViewLabel ?? "Analogi sehari-hari"}
             </button>
             <button type="button" aria-pressed={view === "system"} onClick={() => setView("system")}>
               {topic.systemViewLabel ?? "Sistem sebenarnya"}

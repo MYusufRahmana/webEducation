@@ -2,10 +2,13 @@ import { loadBalancer } from "./load-balancer";
 import { messageQueue } from "./message-queue";
 import { dns } from "./dns";
 import { cdn } from "./cdn";
+import { routing } from "./routing";
 import { objectStorage } from "./object-storage";
 import { https } from "./https";
 import { replication } from "./replication";
 import { cache } from "./cache";
+import { dbIndex } from "./db-index";
+import { sharding } from "./sharding";
 import { rateLimit } from "./rate-limit";
 import { waitingRoom } from "./waiting-room";
 import type { TopicModule } from "./types";
@@ -19,7 +22,7 @@ export const CATEGORIES = [
 ];
 
 /** Published lessons, in curriculum order. */
-export const TOPICS: TopicModule<any>[] = [loadBalancer, dns, cdn, messageQueue, objectStorage, replication, cache, https, rateLimit, waitingRoom];
+export const TOPICS: TopicModule<any>[] = [loadBalancer, dns, routing, cdn, messageQueue, objectStorage, replication, cache, dbIndex, sharding, https, rateLimit, waitingRoom];
 
 /** Old lesson addresses that now live inside another lesson. */
 const SLUG_ALIASES: Record<string, string> = { "dns-sehari-hari": "dns" };

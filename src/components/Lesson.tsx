@@ -169,6 +169,15 @@ export function LessonView({ topic, stepKey, navigate, theme }: { topic: TopicMo
                 </p>
               ))}
             </div>
+            {step.practice?.length ? <Practice items={step.practice} onPart={setSelected} selected={selected} run={(action) => {
+              // the practice panel already shows its controls: do not open the figure drawer
+              runtime.actingFromFigure = true;
+              try {
+                topic.practiceAction?.(action, runtime);
+              } finally {
+                queueMicrotask(() => (runtime.actingFromFigure = false));
+              }
+            }} /> : null}
             {step.analogy ? (
               <div className="analogy">
                 <h3>Analogi</h3>
@@ -264,6 +273,85 @@ function Outcomes({ items }: { items: string[] }) {
         </span>
       ) : null}
     </span>
+  );
+}
+
+/** Lettered practice sub-steps: readable code, a copy button, explained pieces linked to the figure. */
+function Practice({ items, onPart, selected, run }: { items: NonNullable<TopicModule<any>["lesson"]["steps"][number]["practice"]>; onPart: (part: string) => void; selected: string | null; run: (action: string) => void }) {
+  const [active, setActive] = useState(0);
+  const [copied, setCopied] = useState<string | null>(null);
+  const item = items[Math.min(active, items.length - 1)];
+  const copy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const area = document.createElement("textarea");
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+    setCopied(item.id);
+    window.setTimeout(() => setCopied(null), 1800);
+  };
+  return (
+    <section className="practice" aria-label="Latihan">
+      <div className="practice-tabs" role="tablist" aria-label="Langkah latihan">
+        {items.map((entry, i) => (
+          <button key={entry.id} type="button" role="tab" aria-selected={i === active} className="practice-tab" onClick={() => setActive(i)}>
+            {entry.id}
+          </button>
+        ))}
+      </div>
+      <h3>
+        Langkah {item.id} — {item.title}
+      </h3>
+      {item.explain?.map((line) => (
+        <p key={line}>{line}</p>
+      ))}
+      {item.code ? (
+        <div className="practice-code">
+          <pre>
+            <code>{item.code}</code>
+          </pre>
+          <button type="button" className="button compact" onClick={() => copy(item.code!)}>
+            {copied === item.id ? "Tersalin ✓" : "Salin SQL"}
+          </button>
+        </div>
+      ) : null}
+      {item.pieces?.length ? (
+        <ul className="practice-pieces">
+          {item.pieces.map((piece) => (
+            <li key={piece.code}>
+              {piece.part ? (
+                <button type="button" className="part-ref" aria-pressed={selected === piece.part} onClick={() => onPart(piece.part!)}>
+                  <code>{piece.code}</code>
+                </button>
+              ) : (
+                <code>{piece.code}</code>
+              )}{" "}
+              {piece.text}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {item.expect ? <p className="practice-expect">{item.expect}</p> : null}
+      {item.run ? (
+        <button type="button" className="button" onClick={() => run(item.run!.action)}>
+          {item.run.label}
+        </button>
+      ) : null}
+      {item.note ? <p className="muted small">{item.note}</p> : null}
+      <div className="practice-nav">
+        <button type="button" className="button compact" disabled={active === 0} onClick={() => setActive(active - 1)}>
+          Langkah sebelumnya
+        </button>
+        <button type="button" className="button compact" disabled={active >= items.length - 1} onClick={() => setActive(active + 1)}>
+          Langkah latihan berikutnya
+        </button>
+      </div>
+    </section>
   );
 }
 
