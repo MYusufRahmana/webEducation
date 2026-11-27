@@ -5,13 +5,14 @@ import { createElement } from "react";
  * Routes of the static site, kept in the query string so the build works from any folder:
  *   ?                               catalog (Belajar)
  *   ?topik=dns&langkah=root         a lesson step (langkah=ringkasan for the summary)
+ *   ?topik=respons-api&kode=http-401  one note inside a reference page
  *   ?halaman=tentang                about
  * Old links (?topik=dns#langkah-tiers, ?lang=…) are read and mapped by the lesson.
  */
 export type Route =
   | { page: "catalog" }
   | { page: "about" }
-  | { page: "lesson"; slug: string; step: string | null }
+  | { page: "lesson"; slug: string; step: string | null; item?: string | null }
   | { page: "notfound"; what: string };
 
 export function parseRoute(): Route {
@@ -22,7 +23,7 @@ export function parseRoute(): Route {
   const slug = params.get("topik");
   if (slug) {
     const legacy = location.hash.startsWith("#langkah-") ? decodeURIComponent(location.hash.slice("#langkah-".length)) : null;
-    return { page: "lesson", slug, step: params.get("langkah") ?? legacy };
+    return { page: "lesson", slug, step: params.get("langkah") ?? legacy, item: params.get("kode") };
   }
   return { page: "catalog" };
 }
@@ -33,6 +34,7 @@ export function hrefOf(route: Route): string {
   if (route.page === "lesson") {
     params.set("topik", route.slug);
     if (route.step) params.set("langkah", route.step);
+    if (route.item) params.set("kode", route.item);
   }
   const query = params.toString();
   return `${location.pathname}${query ? `?${query}` : ""}`;

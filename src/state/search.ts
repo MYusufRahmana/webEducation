@@ -1,10 +1,11 @@
 import { TOPICS } from "../topics";
+import { REFERENCES } from "../references";
 import type { Route } from "./route";
 
 /** Local search over lesson titles, summaries, steps and glossary terms (PRD P-02). */
 
 export interface SearchEntry {
-  kind: "Pelajaran" | "Langkah" | "Glosarium";
+  kind: "Pelajaran" | "Langkah" | "Glosarium" | "Catatan";
   title: string;
   /** Where it lives, e.g. the lesson title. */
   context: string;
@@ -40,6 +41,11 @@ function build(): SearchEntry[] {
       add({ kind: "Glosarium", title: entry.term.id, context: title, snippet: entry.definition.id, route: { page: "lesson", slug: topic.slug, step: first.key } }, entry.definition.id);
     }
   }
+  for (const ref of REFERENCES) {
+    const add = (entry: Omit<SearchEntry, "titleKey" | "textKey">, text: string) => out.push({ ...entry, titleKey: normalise(entry.title), textKey: normalise(`${entry.title} ${text}`) });
+    add({ kind: "Pelajaran", title: ref.title, context: ref.shortName, snippet: ref.summary, route: { page: "lesson", slug: ref.slug, step: null } }, `${ref.summary} ${ref.shortName}`);
+    for (const e of ref.searchEntries()) add({ kind: "Catatan", title: e.title, context: ref.shortName, snippet: e.snippet, route: { page: "lesson", slug: ref.slug, step: null, item: e.item } }, `${e.snippet} ${e.text}`);
+  }
   return out;
 }
 
@@ -49,7 +55,7 @@ export function search(query: string, limit = 8): SearchEntry[] {
   index ??= build();
   return index
     .filter((entry) => words.every((word) => entry.textKey.includes(word)))
-    .map((entry) => ({ entry, score: words.filter((word) => entry.titleKey.includes(word)).length * 4 + (entry.kind === "Pelajaran" ? 2 : entry.kind === "Glosarium" ? 1 : 0) }))
+    .map((entry) => ({ entry, score: words.filter((word) => entry.titleKey.includes(word)).length * 4 + (entry.kind === "Catatan" && words.some((w) => entry.titleKey.split(" ").includes(w)) ? 6 : 0) + (entry.kind === "Pelajaran" ? 2 : entry.kind === "Glosarium" ? 1 : 0) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map(({ entry }) => entry);

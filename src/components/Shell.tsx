@@ -150,10 +150,28 @@ function SearchBox({ navigate }: { navigate: Navigate }) {
 
 /* ------------------------------------------------------------------ course sidebar */
 
+/**
+ * One category open at a time. The choice outlives remounts (the sidebar is rendered again on every
+ * lesson, and once more inside the mobile drawer), and is tied to the lesson it was made on: moving to a
+ * lesson in another category opens that category instead.
+ */
+let remembered: { slug: string | null; group: string | null } | null = null;
+
 export function CourseSidebar({ activeSlug, navigate, onNavigate, id }: { activeSlug: string | null; navigate: Navigate; onNavigate?: () => void; id?: string }) {
   const groups = catalog();
   const total = groups.reduce((sum, group) => sum + group.lessons.length, 0);
-  const [closed, setClosed] = useState<Record<string, boolean>>({});
+  const activeGroup = groups.find((group) => group.lessons.some((topic) => topic.slug === activeSlug))?.id ?? null;
+  const initial = () => (remembered && (remembered.slug === activeSlug || !activeGroup) ? remembered.group : activeGroup);
+  const [openGroup, setOpenGroup] = useState<string | null>(initial);
+  useEffect(() => {
+    setOpenGroup(initial());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSlug]);
+  const toggle = (group: string) => {
+    const next = openGroup === group ? null : group;
+    remembered = { slug: activeSlug, group: next };
+    setOpenGroup(next);
+  };
   return (
     <nav className="course-nav" aria-label="Daftar materi" id={id}>
       <div className="nav-head">
@@ -162,11 +180,11 @@ export function CourseSidebar({ activeSlug, navigate, onNavigate, id }: { active
       </div>
       <ol className="nav-groups">
         {groups.map((group, groupIndex) => {
-          const open = !closed[group.id];
+          const open = openGroup === group.id;
           const active = group.lessons.some((topic) => topic.slug === activeSlug);
           return (
             <li key={group.id} className="nav-group-item" data-cat={group.id}>
-              <button type="button" className="nav-group" aria-expanded={open} aria-controls={`kategori-${group.id}`} data-active={active || undefined} onClick={() => setClosed((value) => ({ ...value, [group.id]: open }))}>
+              <button type="button" className="nav-group" aria-expanded={open} aria-controls={`kategori-${group.id}`} data-active={active || undefined} onClick={() => toggle(group.id)}>
                 <span className="nav-caret" aria-hidden="true">
                   <Icon name="chevron" />
                 </span>

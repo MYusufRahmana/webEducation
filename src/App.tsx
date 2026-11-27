@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { topicBySlug } from "./topics";
+import { referenceBySlug } from "./references";
 import { useTheme } from "./state/prefs";
 import { Link, useRoute } from "./state/route";
 import { AppHeader, CourseDrawer } from "./components/Shell";
@@ -16,6 +17,7 @@ export default function App() {
   const [drawer, setDrawer] = useState(false);
   const closeDrawer = useCallback(() => setDrawer(false), []);
   const topic = route.page === "lesson" ? topicBySlug(route.slug) : null;
+  const reference = route.page === "lesson" && !topic ? referenceBySlug(route.slug) : null;
 
   useEffect(() => {
     document.documentElement.lang = "id";
@@ -49,8 +51,15 @@ export default function App() {
           Lewati ke kontrol langkah
         </a>
       ) : null}
-      <AppHeader route={route} navigate={navigate} theme={theme} onMenu={topic ? () => setDrawer(true) : null} menuOpen={drawer} />
-      {topic ? (
+      <AppHeader route={route} navigate={navigate} theme={theme} onMenu={topic || reference ? () => setDrawer(true) : null} menuOpen={drawer} />
+      {reference ? (
+        <>
+          <CourseDrawer open={drawer} onClose={closeDrawer} activeSlug={reference.slug} navigate={navigate} />
+          <main id="isi">
+            <reference.Page navigate={navigate} item={route.page === "lesson" ? (route.item ?? null) : null} />
+          </main>
+        </>
+      ) : topic ? (
         <>
           <CourseDrawer open={drawer} onClose={closeDrawer} activeSlug={topic.slug} navigate={navigate} />
           <main id="isi">
@@ -66,7 +75,7 @@ export default function App() {
       ) : (
         <CatalogPage navigate={navigate} theme={theme.resolved} />
       )}
-      {topic ? null : (
+      {topic || reference ? null : (
       <footer className="site-footer">
         <p>Prototipe Alur. Simulasi berjalan di browser; angka waktu sengaja diperlambat.</p>
         <Link to={{ page: "about" }} navigate={navigate}>

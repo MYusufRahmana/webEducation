@@ -1,0 +1,21 @@
+[
+  ["wait", 400],
+  ["click", ".ref-overview-item[data-range='5']"],
+  ["wait", 150],
+  ["eval", "(()=>{if(document.querySelectorAll('.ref-row').length!==4)throw Error('5xx filter');if(document.querySelector('.ref-note-number').textContent!=='500')throw Error('5xx detail');return 'Category filter passed'})()"],
+  ["eval", "document.querySelector('.ref-save').click()"],
+  ["wait", 120],
+  ["eval", "document.querySelectorAll('.ref-filters button')[6].click()"],
+  ["wait", 120],
+  ["eval", "(()=>{if(document.querySelectorAll('.ref-row').length!==1)throw Error('Favourite filter');document.querySelector('.ref-save').click();})()"],
+  ["wait", 120],
+  ["eval", "(()=>{if(!document.querySelector('.ref-empty'))throw Error('Empty favourites');document.querySelector('.ref-empty button').click();})()"],
+  ["wait", 120],
+  ["eval", "document.querySelector('.ref-detail-footer button').click()"],
+  ["wait", 180],
+  ["eval", "(()=>{if(!document.querySelector('.ref-detail-footer button').textContent.includes('Tersalin'))throw Error('Copy link');return 'Favourite toggle and copy passed'})()"],
+  ["key", "ArrowRight", "#ref-tab-codes"],
+  ["wait", 150],
+  ["eval", "(()=>{if(document.activeElement.id!=='ref-tab-guide'||document.getElementById('ref-panel-guide').hidden)throw Error('Keyboard tabs');if(document.querySelectorAll('.ref-guide .ref-section').length!==7)throw Error('Missing guide sections');if(document.documentElement.scrollWidth>innerWidth)throw Error('Tablet overflow');return 'Keyboard tabs and all seven guides passed'})()"],
+  ["shot", "shots/respons-api-tablet.png", "html", 1, [0,0,1024,900]]
+]

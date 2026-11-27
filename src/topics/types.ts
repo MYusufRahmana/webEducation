@@ -66,6 +66,8 @@ export interface PracticeItem {
   code?: string;
   /** What to expect when the code runs (described, never faked output). */
   expect?: string;
+  /** An illustrative piece of output, always labelled (for example "Potongan respons, bukan keseluruhan"). */
+  sample?: { label: string; code: string };
   explain?: string[];
   /** Pieces of the code, each explained; a piece with `part` highlights that part of the figure. */
   pieces?: { code: string; text: string; part?: string }[];

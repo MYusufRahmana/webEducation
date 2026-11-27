@@ -1,0 +1,15 @@
+[
+  ["wait", 500],
+  ["eval", "(()=>{if(document.documentElement.scrollWidth>innerWidth)throw Error('Horizontal overflow');if(getComputedStyle(document.querySelector('.ref-note-panel')).display!=='none')throw Error('Detail visible in list mode');return 'Mobile list passed'})()"],
+  ["shot", "shots/respons-api-mobile-list.png", "html", 1, [0,0,390,844]],
+  ["click", ".ref-row-toggle"],
+  ["wait", 250],
+  ["eval", "(()=>{if(getComputedStyle(document.querySelector('.ref-index')).display!=='none')throw Error('List still visible');if(document.activeElement!==document.querySelector('.ref-note-panel'))throw Error('Focus did not move');if(document.documentElement.scrollWidth>innerWidth)throw Error('Detail overflow');return 'Mobile selection and focus passed'})()"],
+  ["shot", "shots/respons-api-mobile-detail.png", "html", 1, [0,0,390,844]],
+  ["eval", "document.querySelector('.ref-back').click()"],
+  ["wait", 200],
+  ["eval", "(()=>{if(getComputedStyle(document.querySelector('.ref-index')).display==='none')throw Error('Back failed');return 'Mobile back passed'})()"],
+  ["eval", "location.search='?topik=respons-api&kode=app-2003'"],
+  ["wait", 700],
+  ["eval", "(()=>{if(document.querySelector('#ref-note-title').textContent!=='TokenSignatureInvalid')throw Error('Mobile deep link');if(document.documentElement.scrollWidth>innerWidth)throw Error('Long code overflow');return 'Mobile internal deep link passed'})()"]
+]

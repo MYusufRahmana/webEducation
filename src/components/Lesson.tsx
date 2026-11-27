@@ -337,6 +337,14 @@ function Practice({ items, onPart, selected, run }: { items: NonNullable<TopicMo
         </ul>
       ) : null}
       {item.expect ? <p className="practice-expect">{item.expect}</p> : null}
+      {item.sample ? (
+        <figure className="practice-sample">
+          <figcaption>{item.sample.label}</figcaption>
+          <pre>
+            <code>{item.sample.code}</code>
+          </pre>
+        </figure>
+      ) : null}
       {item.run ? (
         <button type="button" className="button" onClick={() => run(item.run!.action)}>
           {item.run.label}

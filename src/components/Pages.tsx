@@ -23,15 +23,15 @@ export function CatalogPage({ navigate, theme }: { navigate: Navigate; theme: "l
           <ul className="lesson-cards">
             {group.lessons.map((topic) => (
               <li key={topic.slug}>
-                <Link to={{ page: "lesson", slug: topic.slug, step: null }} navigate={navigate} className="lesson-card">
-                  <img src={topic.fallbackImage(theme)} alt="" loading="lazy" />
+                <Link to={{ page: "lesson", slug: topic.slug, step: null }} navigate={navigate} className="lesson-card" data-kind={topic.kind}>
+                  <img src={topic.image(theme)} alt="" loading="lazy" />
                   <span className="lesson-card-text">
-                    <strong>{topic.meta.title.id}</strong>
-                    <span>{topic.meta.summary.id}</span>
+                    <strong>{topic.title}</strong>
+                    <span>{topic.summary}</span>
                     <span className="lesson-meta">
-                      <span className="badge">Level: {topic.meta.level.id}</span>
-                      <span>{topic.meta.minutes} menit</span>
-                      <span>{topic.lesson.steps.length} langkah</span>
+                      <span className="badge">{topic.kind === "reference" ? "Catatan referensi" : `Level: ${topic.level}`}</span>
+                      <span>{topic.minutes} menit</span>
+                      <span>{topic.countLabel}</span>
                     </span>
                   </span>
                 </Link>
